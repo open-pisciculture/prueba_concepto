@@ -64,7 +64,7 @@ def inicializar_hist():
          # Normalize histograms based on number of pixels per frame.
         numPixels = np.prod(frame.shape[:2])
         if color == 'rgb':
-            cv2.imshow('RGB', frame)
+            cv2.imshow('Imagen Estanque', frame)
             (b, g, r) = cv2.split(frame)
             histogramR = cv2.calcHist([r], [0], None, [bins], [0, 255]) / numPixels
             histogramG = cv2.calcHist([g], [0], None, [bins], [0, 255]) / numPixels
@@ -79,10 +79,16 @@ def inicializar_hist():
             lineGray.set_ydata(histogram)
         fig.canvas.draw()
 
+        # PROCESAMIENTO DE LA IMAGEN (frame)
+        bordes = cv2.Canny(frame, 100,200)
+
+        # Display the resulting frame
+        cv2.imshow('ImagenEstanque', bordes)
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    capture.release()
+    cap.release()
     cv2.destroyAllWindows()
 
 
@@ -107,7 +113,5 @@ def procesar_video():
 
 
 if __name__ == '__main__':
-#    video_show = threading.Thread(target = procesar_video)
-#    video_show.start()
    hist_process = threading.Thread(target = inicializar_hist)
    hist_process.start()
