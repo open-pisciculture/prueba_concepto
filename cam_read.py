@@ -49,27 +49,28 @@ def inicializar_hist():
 
     # Grab, process, and display video frames. Update plot line object(s).
     # Normalize histograms based on number of pixels per frame.
-    numPixels = np.prod(frame.shape[:2])
-    if color == 'rgb':
-        cv2.imshow('RGB', frame)
-        (b, g, r) = cv2.split(frame)
-        histogramR = cv2.calcHist([r], [0], None, [bins], [0, 255]) / numPixels
-        histogramG = cv2.calcHist([g], [0], None, [bins], [0, 255]) / numPixels
-        histogramB = cv2.calcHist([b], [0], None, [bins], [0, 255]) / numPixels
-        lineR.set_ydata(histogramR)
-        lineG.set_ydata(histogramG)
-        lineB.set_ydata(histogramB)
-    else:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        cv2.imshow('Grayscale', gray)
-        histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
-        lineGray.set_ydata(histogram)
-    fig.canvas.draw()
-    
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    while True:
+        numPixels = np.prod(frame.shape[:2])
+        if color == 'rgb':
+            cv2.imshow('RGB', frame)
+            (b, g, r) = cv2.split(frame)
+            histogramR = cv2.calcHist([r], [0], None, [bins], [0, 255]) / numPixels
+            histogramG = cv2.calcHist([g], [0], None, [bins], [0, 255]) / numPixels
+            histogramB = cv2.calcHist([b], [0], None, [bins], [0, 255]) / numPixels
+            lineR.set_ydata(histogramR)
+            lineG.set_ydata(histogramG)
+            lineB.set_ydata(histogramB)
+        else:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            cv2.imshow('Grayscale', gray)
+            histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
+            lineGray.set_ydata(histogram)
+        fig.canvas.draw()
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-    capture.release()
+    cap.release()
     cv2.destroyAllWindows()
     
 
