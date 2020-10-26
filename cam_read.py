@@ -100,5 +100,7 @@ def procesar_video():
 
 
 if __name__ == '__main__':
-   video_process = threading.Thread(target = procesar_video)
-   video_process.start()
+   video_show = threading.Thread(target = procesar_video)
+   video_show.start()
+   hist_process = threading.Thread(target = inicializar_hist)
+   hist_process.start()
