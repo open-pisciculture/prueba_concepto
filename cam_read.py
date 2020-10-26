@@ -83,7 +83,7 @@ def inicializar_hist():
         bordes = cv2.Canny(frame, 100,200)
 
         # Display the resulting frame
-        cv2.imshow('ImagenEstanque', bordes)
+        cv2.imshow('Bordes Imagen', bordes)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
