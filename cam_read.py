@@ -49,7 +49,7 @@ def inicializar_hist():
 
     # Grab, process, and display video frames. Update plot line object(s).
     while True:
-        (grabbed, frame) = capture.read()
+        (grabbed, frame) = cap.read()
 
         if not grabbed:
             break
