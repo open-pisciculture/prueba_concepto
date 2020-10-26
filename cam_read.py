@@ -7,8 +7,9 @@ import threading
 
 print("Versión de OpenCV:",cv2.__version__)
 
-global cap
+global cap, frame
 cap = cv2.VideoCapture(-1)
+frame = np.array([])
 
 def quitar_ruido(img):
     # Create our sharpening kernel, the sum of all values must equal to one for uniformity
@@ -18,9 +19,7 @@ def quitar_ruido(img):
     sharpened_img = cv2.filter2D(img, -1, kernel_sharpening)
     return sharpened_img
 
-def inicializar_hist():
-    capture = cv2.VideoCapture(0)
-    
+def inicializar_hist():    
     color = 'rgb'
     bins = 15
     resizeWidth = 0
@@ -50,7 +49,7 @@ def inicializar_hist():
     # Grab, process, and display video frames. Update plot line object(s).
     # Normalize histograms based on number of pixels per frame.
     while True:
-        grabbed, frame = capture.read()
+        grabbed, frame = cap.read()
 
         if not grabbed:
             break
@@ -75,7 +74,7 @@ def inicializar_hist():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    capture.release()
+    cap.release()
     cv2.destroyAllWindows()
     
 
