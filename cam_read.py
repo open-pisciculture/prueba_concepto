@@ -80,10 +80,10 @@ def inicializar_hist():
         fig.canvas.draw()
 
         # PROCESAMIENTO DE LA IMAGEN (frame)
-        bordes = cv2.Canny(frame, 100,200)
+        # bordes = cv2.Canny(frame, 100,200)
 
         # Display the resulting frame
-        cv2.imshow('Bordes Imagen', bordes)
+        # cv2.imshow('Bordes Imagen', bordes)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
