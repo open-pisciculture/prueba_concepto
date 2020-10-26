@@ -19,10 +19,11 @@ def quitar_ruido(img):
     sharpened_img = cv2.filter2D(img, -1, kernel_sharpening)
     return sharpened_img
 
-def inicializar_hist():    
+def inicializar_hist():
     color = 'rgb'
-    bins = 15
+    bins = 16
     resizeWidth = 0
+
     # Initialize plot.
     fig, ax = plt.subplots()
     if color == 'rgb':
@@ -31,7 +32,7 @@ def inicializar_hist():
         ax.set_title('Histogram (grayscale)')
     ax.set_xlabel('Bin')
     ax.set_ylabel('Frequency')
-
+    
     # Initialize plot line object(s). Turn on interactive plotting and show plot.
     lw = 3
     alpha = 0.5
@@ -47,13 +48,20 @@ def inicializar_hist():
     plt.show()
 
     # Grab, process, and display video frames. Update plot line object(s).
-    # Normalize histograms based on number of pixels per frame.
     while True:
-        grabbed, frame = cap.read()
+        (grabbed, frame) = capture.read()
 
         if not grabbed:
             break
-        
+
+        # Resize frame to width, if specified.
+        if resizeWidth > 0:
+            (height, width) = frame.shape[:2]
+            resizeHeight = int(float(resizeWidth / width) * height)
+            frame = cv2.resize(frame, (resizeWidth, resizeHeight),
+                interpolation=cv2.INTER_AREA)
+
+         # Normalize histograms based on number of pixels per frame.
         numPixels = np.prod(frame.shape[:2])
         if color == 'rgb':
             cv2.imshow('RGB', frame)
@@ -70,13 +78,13 @@ def inicializar_hist():
             histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
             lineGray.set_ydata(histogram)
         fig.canvas.draw()
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
 
-    cap.release()
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+    capture.release()
     cv2.destroyAllWindows()
-    
+
 
 def procesar_video():
     global cap, frame
