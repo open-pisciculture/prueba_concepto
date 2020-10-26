@@ -79,8 +79,8 @@ def inicializar_hist():
             lineGray.set_ydata(histogram)
         fig.canvas.draw()
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     capture.release()
     cv2.destroyAllWindows()
