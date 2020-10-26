@@ -21,9 +21,10 @@ while(True):
 
     # PROCESAMIENTO DE LA IMAGEN (frame)
     imagen_filtrada = quitar_ruido(frame)
+    bordes = cv2.Canny(imagen_filtrada, 100,200)
 
     # Display the resulting frame
-    cv2.imshow('ImagenEstanque', imagen_filtrada)
+    cv2.imshow('ImagenEstanque', bordes)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
