@@ -20,7 +20,7 @@ def quitar_ruido(img):
     return sharpened_img
 
 def inicializar_hist():
-    color = 'rgb'
+    color = 'gray'
     bins = 16
     resizeWidth = 0
 
