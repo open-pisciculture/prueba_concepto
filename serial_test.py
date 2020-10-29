@@ -21,6 +21,6 @@ if __name__ == '__main__':
             line = ser.readline().decode('utf-8').rstrip()
 
             #desde 19 hasta 25
-            num = obtenerNumero(line)
-            print(num[0])
-            post_request(num[0])
+            num = obtenerNumero(line)[0]
+            print(type(num))
+            post_request(num)
