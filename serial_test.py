@@ -3,7 +3,7 @@ import serial
 from ubi_test import post_request
 
 #TODO: Esto es temporal. Mejor que el arduino envie un string que este mejor disenado para recuperar los datos.
-def obtenerNumero(s)):
+def obtenerNumero(s):
     l = []
     for t in s.split():
     try:
