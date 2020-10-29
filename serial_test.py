@@ -22,6 +22,6 @@ if __name__ == '__main__':
 
             #desde 19 hasta 25
             num = obtenerNumero(line)[0]
-            data = {"Water Temperature", num}
+            data = {"histogram_mean": num}
             print(data)
             post_request(data)
