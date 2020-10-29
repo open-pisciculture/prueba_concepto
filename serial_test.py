@@ -22,5 +22,5 @@ if __name__ == '__main__':
 
             #desde 19 hasta 25
             num = obtenerNumero(line)
-            print(num)
-            post_request(num)
+            print(num[0])
+            post_request(num[0])
