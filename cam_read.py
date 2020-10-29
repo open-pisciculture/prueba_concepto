@@ -76,6 +76,7 @@ def inicializar_hist():
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow('Grayscale', gray)
             histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
+            print(type(histogram))
             lineGray.set_ydata(histogram)
         fig.canvas.draw()
 
