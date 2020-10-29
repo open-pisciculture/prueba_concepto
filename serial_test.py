@@ -6,10 +6,12 @@ from ubi_test import post_request
 def obtenerNumero(s):
     l = []
     for t in s.split():
-    try:
-        l.append(float(t))
-    except ValueError:
-        pass
+        try:
+            l.append(float(t))
+        except ValueError:
+            pass
+
+    return l
 
 if __name__ == '__main__':
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
