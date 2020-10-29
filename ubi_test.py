@@ -54,8 +54,7 @@ def post_request(payload):
 
 
 def main():
-    payload = build_payload(
-        VARIABLE_LABEL_1, VARIABLE_LABEL_2, VARIABLE_LABEL_3)
+    payload = build_payload(VARIABLE_LABEL_1, VARIABLE_LABEL_2, VARIABLE_LABEL_3)
 
     print("[INFO] Attemping to send data")
     post_request(payload)

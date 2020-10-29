@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import threading
+from ubi_test import post_request
 
 print("Versión de OpenCV:",cv2.__version__)
 
@@ -76,7 +77,11 @@ def inicializar_hist():
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow('Grayscale', gray)
             histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
-            print(type(histogram))
+            # Calculo la media del histograma
+            hist_mean = np.mean(histogram)
+            # Creo un diccionario para publicarlo en Ubidots
+            dict_data = {"histogram_mean": hist_mean}
+            post_request(dict_data)
             lineGray.set_ydata(histogram)
         fig.canvas.draw()
 
