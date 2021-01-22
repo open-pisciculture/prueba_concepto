@@ -19,6 +19,25 @@ def quitar_ruido(img):
                                  [-1,-1,-1]])
     sharpened_img = cv2.filter2D(img, -1, kernel_sharpening)
     return sharpened_img
+    
+def procesar_video():
+    global cap, frame
+    while True:
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        # PROCESAMIENTO DE LA IMAGEN (frame)
+        imagen_filtrada = quitar_ruido(frame)
+        # bordes = cv2.Canny(imagen_filtrada, 100,200)
+
+        # Display the resulting frame
+        cv2.imshow('ImagenEstanque', imagen_filtrada)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
 
 def inicializar_hist():
     color = 'gray'
@@ -77,12 +96,16 @@ def inicializar_hist():
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cv2.imshow('Grayscale', gray)
             histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
+            lineGray.set_ydata(histogram)
+
             # Calculo la media del histograma
             hist_mean = np.mean(histogram)
+
             # Creo un diccionario para publicarlo en Ubidots
             dict_data = {"histogram_mean": hist_mean}
-            post_request(dict_data)
-            lineGray.set_ydata(histogram)
+            
+            # Acá se publica en Ubidots
+            # post_request(dict_data)
         fig.canvas.draw()
 
         # PROCESAMIENTO DE LA IMAGEN (frame)
@@ -98,24 +121,6 @@ def inicializar_hist():
     cv2.destroyAllWindows()
 
 
-def procesar_video():
-    global cap, frame
-    while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-
-        # PROCESAMIENTO DE LA IMAGEN (frame)
-        imagen_filtrada = quitar_ruido(frame)
-        # bordes = cv2.Canny(imagen_filtrada, 100,200)
-
-        # Display the resulting frame
-        cv2.imshow('ImagenEstanque', imagen_filtrada)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    # When everything done, release the capture
-    cap.release()
-    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
