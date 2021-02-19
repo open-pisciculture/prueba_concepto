@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import threading
+import retinex
 from ubi_test import post_request
 
 print("Versión de OpenCV:",cv2.__version__)
@@ -94,7 +95,10 @@ def inicializar_hist():
             lineB.set_ydata(histogramB)
         else:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            cv2.imshow('Grayscale', gray)
+            cv2.imshow('Org', frame)
+            # RETINEX: descomentar para mostrar cómo queda la imagen luego de aplicar retinex
+            # img_amsrcr = retinex.automatedMSRCR(frame,[15, 80, 250])
+            # cv2.imshow('AMSRCR', img_amsrcr)
             histogram = cv2.calcHist([gray], [0], None, [bins], [0, 255]) / numPixels
             lineGray.set_ydata(histogram)
 
