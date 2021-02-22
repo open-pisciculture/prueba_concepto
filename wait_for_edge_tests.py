@@ -10,7 +10,7 @@ def my_callback_rising():
 
 # Function that will be called when rising (from 1 to 0) event is detected
 def my_callback_falling():
-    print('Uy kieto, rising edge')
+    print('Uy kieto, falling edge')
 
 # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
