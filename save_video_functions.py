@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 import time
+import RPi.GPIO as GPIO
 
 def save_video_len(video_len):
     video_frames = []
@@ -30,4 +31,11 @@ def save_video_len(video_len):
     cap.release()
     cv2.destroyAllWindows()
 
-save_video_len(5)
+if __name__ == "__main__":
+    GPIO.setmode(GPIO.BCM)
+    # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
+    GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    print("Waiting for rising edge on port 23")
+    GPIO.wait_for_edge(23, GPIO.RISING)
+    print("Rising edge detected.")
+    save_video_len(5)
