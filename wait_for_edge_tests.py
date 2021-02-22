@@ -25,7 +25,7 @@ while True:
         print("Waiting for rising edge on port 23")
         GPIO.wait_for_edge(23, GPIO.RISING)
         print("Rising edge detected.")
-        time.sleep(1)
+        time.sleep(1) # To avoid debouncing
     
     except KeyboardInterrupt:  
         GPIO.cleanup()       # clean up GPIO on CTRL+C exit
