@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import RPi.GPIO as GPIO
+import time
 
 GPIO.setmode(GPIO.BCM)
 # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
@@ -24,6 +25,7 @@ while True:
         print("Waiting for rising edge on port 23")
         GPIO.wait_for_edge(23, GPIO.RISING)
         print("Rising edge detected.")
+        time.sleep(1)
     
     except KeyboardInterrupt:  
         GPIO.cleanup()       # clean up GPIO on CTRL+C exit
