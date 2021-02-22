@@ -19,11 +19,12 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # GPIO.add_event_detect(23, GPIO.FALLING, callback=my_callback_falling)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-try:  
-    print("Waiting for rising edge on port 23")
-    GPIO.wait_for_edge(23, GPIO.RISING)
-    print("Rising edge detected.")
-  
-except KeyboardInterrupt:  
-    GPIO.cleanup()       # clean up GPIO on CTRL+C exit
+while True:
+    try:  
+        print("Waiting for rising edge on port 23")
+        GPIO.wait_for_edge(23, GPIO.RISING)
+        print("Rising edge detected.")
+    
+    except KeyboardInterrupt:  
+        GPIO.cleanup()       # clean up GPIO on CTRL+C exit
 GPIO.cleanup()           # clean up GPIO on normal exit
