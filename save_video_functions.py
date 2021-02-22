@@ -40,4 +40,4 @@ if __name__ == "__main__":
         GPIO.wait_for_edge(23, GPIO.RISING)
         print("Rising edge detected.")
         save_video_len(5)
-        time.sleep(60)
+        time.sleep(10)
