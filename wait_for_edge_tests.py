@@ -15,10 +15,10 @@ def my_callback_falling():
 # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # GPIO.add_event_detect(23, GPIO.RISING, callback=my_callback_rising)
-# GPIO.add_event_detect(23, GPIO.FALLING, callback=my_callback_falling)
+GPIO.add_event_detect(23, GPIO.FALLING, callback=my_callback_falling)
 
 try:  
-    print("Waiting for falling edge on port 23")
+    print("Waiting for rising edge on port 23")
     GPIO.wait_for_edge(23, GPIO.RISING)
     print("Rising edge detected.")
   
