@@ -35,7 +35,8 @@ if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
     # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
     GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    print("Waiting for rising edge on port 23")
-    GPIO.wait_for_edge(23, GPIO.RISING)
-    print("Rising edge detected.")
-    save_video_len(5)
+    while True:
+        print("Waiting for rising edge on port 23")
+        GPIO.wait_for_edge(23, GPIO.RISING)
+        print("Rising edge detected.")
+        save_video_len(5)
