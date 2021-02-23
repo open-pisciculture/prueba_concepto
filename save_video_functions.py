@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import time
 import RPi.GPIO as GPIO
+from ubi_test import post_request
 
 def save_video_len(video_len):
     video_frames = []
@@ -11,14 +12,18 @@ def save_video_len(video_len):
     frame = np.array([])
     t0 = time.time()
     t1 = t0
-    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    out = cv2.VideoWriter('saved_videos/saved_video_date_{}.avi'.format(date), cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (640,480) )
+    date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    out = cv2.VideoWriter('saved_videos/saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (640,480) )
 
     while t1 - t0 < video_len:
+        date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         t1 = time.time()
 
         # Capture frame-by-frame
         ret, frame = cap.read()
+        # Added date to video frame
+        frame = cv2.putText(frame, date, (10,20), cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0,255,0))
+
         out.write(frame)
 
         # Display the resulting frame
@@ -41,3 +46,6 @@ if __name__ == "__main__":
         print("Rising edge detected.")
         save_video_len(5)
         time.sleep(10)
+        try: # Post to Ubidots video saved confirmation
+            data = {"video_date": date_0}
+            post_request(data)

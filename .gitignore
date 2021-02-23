@@ -1,2 +1,2 @@
-# Nothing ignored yet
-.avi
+# Currently ignoring .avi format video files
+*.avi
