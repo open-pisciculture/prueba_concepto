@@ -1,0 +1,4 @@
+2021-03-02 18:22:48,951   ibmiotf.device.Client      INFO    Connected successfully: d:1pv9sa:RasPi:665544332211
+2021-03-02 18:23:05,745   ibmiotf.device.Client      INFO    Connected successfully: d:1pv9sa:RasPi:665544332211
+2021-03-02 18:55:51,559   ibmiotf.device.Client      INFO    Disconnected from the IBM Watson IoT Platform
+2021-03-02 18:55:51,560   ibmiotf.device.Client      INFO    Closed connection to the IBM Watson IoT Platform
