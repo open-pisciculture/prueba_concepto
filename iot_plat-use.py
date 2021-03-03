@@ -43,8 +43,8 @@ def getTempHum():
     # if temp_hum.is_valid():
     #     temp = temp_hum.temperature
     #     hum =  temp_hum.humidity
-    temp = np.sin( (2*np.pi/10) * time.time())
-    hum = 10*np.cos( (2*np.pi/10) * time.time())
+    temp = np.sin( (2*np.pi/100) * time.time())
+    hum = 90*np.cos( (2*np.pi/300) * time.time())
 
 
 def myOnPublishCallback():
@@ -59,11 +59,12 @@ def send(data):
 # get a command from Watson IoT Platform
 def myCommandCallback(cmd):
     print("Command received: %s\n" % cmd.data)
-#     if cmd.data['led_on'] == 1:
-#         GPIO.output(LED_pin, True)
-#     else:
-#         GPIO.output(LED_pin, False)
-    
+    if cmd.data['led_on'] == 1:
+        print('LED ON')
+        # GPIO.output(LED_pin, True)
+    else:
+        pass
+        # GPIO.output(LED_pin, False)
 
 if __name__=='__main__':
     # init_GPIO()
