@@ -1,0 +1,11 @@
+identity:
+    orgId: 1pv9sa
+    typeId: RasPi
+    deviceId: 665544332211
+auth:
+    token: Tkn.1234
+options:
+    domain: internetofthings.ibmcloud.com
+    logLevel: debug
+    http:
+        verify: True

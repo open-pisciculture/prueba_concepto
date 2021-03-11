@@ -1,2 +1,3 @@
 # Currently ignoring .avi format video files
 *.avi
+*.log

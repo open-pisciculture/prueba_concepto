@@ -5,6 +5,12 @@
 import time
 import ibmiotf.device
 import numpy as np
+import yaml
+import wiotp.sdk.device
+import wiotp.sdk.messages
+
+# import wiotp.sdk.messages.Message
+# import wiotp.sdk.messages.MessageCodec
 
 organization = "1pv9sa" #add organisation from the IoT platform service
 deviceType = "RasPi" #add device type from the IoT platform service
@@ -20,9 +26,9 @@ hum = 0
 
 # Initialize the device client.
 deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
+# client = wiotp.sdk.device.DeviceClient(deviceOptions)
 client = ibmiotf.device.Client(deviceOptions)
 print("init successful")
-
 
 # DHT11_sensor = dht11.DHT11(pin = DHT11_pin)
 
@@ -53,6 +59,10 @@ def myOnPublishCallback():
 # Connect and send a datapoint 
 def send(data):
     success = client.publishEvent("data", "json", data, qos=0, on_publish=myOnPublishCallback)
+
+    # Publish the same event, in both json and yaml formats:
+    # success_0 = client.publishEvent("status", "json", data, qos=0, on_publish=myOnPublishCallback)
+    # success_1 = client.publishEvent("status", "yaml", data, qos=0, on_publish=myOnPublishCallback)
     if not success:
         print("Not connected to IoTF")
 
@@ -65,6 +75,31 @@ def myCommandCallback(cmd):
     else:
         pass
         # GPIO.output(LED_pin, False)
+
+
+###### Encoder, add custom timestamp #######
+
+# class YamlCodec(ibmiotf.MessageCodec):
+
+#     @staticmethod
+#     def encode(data=None, timestamp=None):
+#         return yaml.dumps(data)
+
+#     @staticmethod
+#     def decode(message):
+#         try:
+#             data = yaml.loads(message.payload.decode("utf-8"))
+#         except ValueError as e:
+#             raise InvalidEventException("Unable to parse YAML.  payload=\"%s\" error=%s" % (message.payload, str(e)))
+
+#         timestamp = datetime.now(pytz.timezone('UTC'))
+
+#         return wiotp.sdk.Message(data, timestamp)
+
+# client.setMessageCodec("yaml", YamlCodec)
+
+
+############################################
 
 if __name__=='__main__':
     # init_GPIO()
