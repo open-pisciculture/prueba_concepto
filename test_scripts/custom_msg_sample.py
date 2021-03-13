@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import wiotp.sdk.device
 import wiotp.sdk.messages
 import yaml
@@ -16,30 +18,14 @@ def eventPublishCallback():
 
 client.connect()
 
-class CustomTimeCodec(wiotp.sdk.messages.MessageCodec):
-
-    # @staticmethod
-    # def encode(data=None, timestamp=datetime.datetime.now(pytz.timezone('Europe/Vienna')):
-    #     print('DATA#####',data)
-    #     return yaml.dump(data)
-    
+class CustomTimeCodec(wiotp.sdk.messages.MessageCodec):    
     @staticmethod
     def encode(data=None, timestamp=None):
         return data['hello_time'] + "," + str(data['temp_time']) + "," + str(data['hum_time'])
 
-    # @staticmethod
-    # def decode(message):
-    #     try:
-    #         data = yaml.loads(message.payload.decode("utf-8"))
-    #     except ValueError as e:
-    #         raise InvalidEventException("Unable to parse YAML.  payload=\"%s\" error=%s" % (message.payload, str(e)))
-
-    #     timestamp = datetime.datetime.now(pytz.timezone('UTC'))
-
-    #     return wiotp.sdk.messages.Message(data, timestamp)
-
     @staticmethod
     def decode(message):
+        print('Tipo: ',type(message))
         (hello, temp, hum) = message.payload.split(",")
         
         data = {}
@@ -49,12 +35,17 @@ class CustomTimeCodec(wiotp.sdk.messages.MessageCodec):
 
         timestamp = datetime.datetime.now(pytz.timezone('UTC'))
         
-        return Message(data, timestamp)
+        return wiotp.sdk.messages.Message(data, timestamp)
 
 client.setMessageCodec("custom", CustomTimeCodec)
 
+i = 0
+# while i < 20:
 data={'hello_time' : 'hey there', 'temp_time': np.sin( (2*np.pi/100) * time.time()), 'hum_time': 90*np.cos( (2*np.pi/300) * time.time())}
 data={'hello_time' : 'hey there', 'temp_time': -100, 'hum_time': -50}
 # success_0 = client.publishEvent("status", "json", data, 0, eventPublishCallback)
 success_1 = client.publishEvent("status", "custom", data, 0, eventPublishCallback)
+i+=1
+time.sleep(1)
+
 client.disconnect()

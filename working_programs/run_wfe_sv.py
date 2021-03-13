@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+'''
+    Run Wait_for_edge program
+'''
+
 import cv2
 import numpy as np
 import time
@@ -13,7 +17,7 @@ def save_video_len(video_len):
     t0 = time.time()
     t1 = t0
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    out = cv2.VideoWriter('saved_videos/saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (640,480) )
+    out = cv2.VideoWriter('../saved_videos/saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (640,480) )
 
     while t1 - t0 < video_len:
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -49,3 +53,5 @@ if __name__ == "__main__":
         try: # Post to Ubidots video saved confirmation
             data = {"video_date": date_0}
             post_request(data)
+        except:
+            pass

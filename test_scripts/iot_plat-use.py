@@ -8,6 +8,8 @@ import numpy as np
 import yaml
 import wiotp.sdk.device
 import wiotp.sdk.messages
+from datetime import datetime
+import pytz
 
 # import wiotp.sdk.messages.Message
 # import wiotp.sdk.messages.MessageCodec
@@ -59,10 +61,6 @@ def myOnPublishCallback():
 # Connect and send a datapoint 
 def send(data):
     success = client.publishEvent("data", "json", data, qos=0, on_publish=myOnPublishCallback)
-
-    # Publish the same event, in both json and yaml formats:
-    # success_0 = client.publishEvent("status", "json", data, qos=0, on_publish=myOnPublishCallback)
-    # success_1 = client.publishEvent("status", "yaml", data, qos=0, on_publish=myOnPublishCallback)
     if not success:
         print("Not connected to IoTF")
 
@@ -77,42 +75,19 @@ def myCommandCallback(cmd):
         # GPIO.output(LED_pin, False)
 
 
-###### Encoder, add custom timestamp #######
-
-# class YamlCodec(ibmiotf.MessageCodec):
-
-#     @staticmethod
-#     def encode(data=None, timestamp=None):
-#         return yaml.dumps(data)
-
-#     @staticmethod
-#     def decode(message):
-#         try:
-#             data = yaml.loads(message.payload.decode("utf-8"))
-#         except ValueError as e:
-#             raise InvalidEventException("Unable to parse YAML.  payload=\"%s\" error=%s" % (message.payload, str(e)))
-
-#         timestamp = datetime.now(pytz.timezone('UTC'))
-
-#         return wiotp.sdk.Message(data, timestamp)
-
-# client.setMessageCodec("yaml", YamlCodec)
-
-
-############################################
-
 if __name__=='__main__':
     # init_GPIO()
     client.connect()
     while True:
         try:
             getTempHum()
+            local_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            send({"temp":temp, "hum": hum})
+            send( {"temp":temp, "hum": hum, "timestamp": local_time } )
             
             client.commandCallback = myCommandCallback
             
-            time.sleep(2)
+            time.sleep(15)
             
         except KeyboardInterrupt:
             client.disconnect()
