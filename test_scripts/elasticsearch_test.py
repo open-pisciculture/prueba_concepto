@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 
 import time
-import numpy as np
-# Import Elasticsearch package 
+import numpy as not_published_docs
 from elasticsearch import Elasticsearch 
-# Connect to the elastic cluster
-# es=Elasticsearch([{'host':'192.168.0.7','port':5601}])
+import pandas as pd
 
 def initialize():
     global es, doc, not_published_docs
+    # Connect to the elastic cluster
     es = Elasticsearch(['https://search-pisciculture-uwdladrbcgs5v53fetxiv7cxu4.us-east-2.es.amazonaws.com/'])
 
     current_timestamp = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime())
@@ -53,6 +52,10 @@ if __name__ == '__main__':
             doc_i += 1
             time.sleep(1)
         except KeyboardInterrupt:
+            if len(not_published_docs) > 0:
+                not_published_df = pd.DataFrame(not_published_docs)
+                not_published_df.to_csv('files_not_published.csv'+current_timestamp[:16], index=False, header=False)
+
             break
         except:
             not_published_docs.append(doc)
