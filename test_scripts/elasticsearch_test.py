@@ -52,5 +52,7 @@ if __name__ == '__main__':
             print("Posted doc", current_timestamp, "\n")
             doc_i += 1
             time.sleep(1)
+        except KeyboardInterrupt:
+            break
         except:
             not_published_docs.append(doc)
