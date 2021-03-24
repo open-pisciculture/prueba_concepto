@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import time
-import numpy as not_published_docs
+import numpy as np
 from elasticsearch import Elasticsearch 
 import pandas as pd
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             if len(not_published_docs) > 0:
                 not_published_df = pd.DataFrame(not_published_docs)
-                not_published_df.to_csv('files_not_published.csv'+current_timestamp[:16], index=False, header=False)
+                not_published_df.to_csv('files_not_published'+current_timestamp[:16]+'.csv', index=False, header=False)
 
             break
         except:
