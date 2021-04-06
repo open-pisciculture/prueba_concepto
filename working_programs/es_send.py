@@ -4,45 +4,17 @@ import time
 import numpy as np
 from elasticsearch import Elasticsearch 
 import pandas as pd
+import es_connect
 
 global es, doc, not_published_docs
 es = None
 doc = {}
 not_published_docs = []
 
-def initialize_es_cluster():
-    '''
-        This function connects with ElasticSearch Cluster in AWS
-        Defines default document (name, last_name, temperature, current_timestamp)
-    '''
-    global es, doc, not_published_docs
-    # Connect to the elastic cluster
-    es = Elasticsearch(['https://search-pisciculture-uwdladrbcgs5v53fetxiv7cxu4.us-east-2.es.amazonaws.com/'])
-
-    current_timestamp = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()) # Timestamp in UTC time
-
-    doc= {
-        "first_name":"alejandro",
-        "last_name":"arias",
-        "temperature": 20 * np.sin(2*np.pi * time.time()/40 ),
-        "@timestamp": current_timestamp
-    }
-
-    not_published_docs = []
-
-def publish_doc_es(dict = {'default': None}, index = 'piscicult', time_stamp = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime())):
-    global es, doc
-    for key in dict:
-        doc[key] = dict[key]
-    doc["@timestamp"] = time_stamp
-    #Now let's store this document in Elasticsearch
-    res = es.index(index = index, body=doc)
-    return res
 
 
 if __name__ == '__main__':
     while True:
-        initialize_es_cluster()
         try:
             initialize_es_cluster()
             value_temp = 35 * np.sin( 2*np.pi * time.time()/1000 )
