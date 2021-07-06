@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import random
 import serial
 from PIL import Image
 from PIL import ImageDraw
@@ -29,10 +30,29 @@ if __name__ == '__main__':
             if ser.in_waiting > 0:
                 print("Got something")
                 # Read raw serial port
-                data = ser.read(6000) #.rstrip() # 6000 is just a very high limit of bytes to read
-                print(f'data type: {type(data)}')
-                print(f'data length: {len(data)}')
-                print(f'Data:\n {data}')
+                data = ser.read(10000)#.rstrip() # 6000 is just a very high limit of bytes to read
+                # print(data)
+
+                # r_data = binascii.unhexlify(data)
+                r_data = data
+
+                r_data = ""
+                #r_data = "".unhexlify(chr(int(b_data[i:i+2],16)) for i in range(0, len(b_data),2))
+
+                try:
+                    stream = io.BytesIO(r_data)
+
+                    img = Image.open(stream)
+                    draw = ImageDraw.Draw(img)
+
+                    img.show()
+
+                    img_name = "a_test" + str(int(random.random()*100)) + ".png"
+                    img.save(img_name)
+                except:
+                    print(f'Error reading data of len {len(data)}')
+
+                # print(data)
 
                 # # Read decoded serial port
                 # line = ser.readline().decode('utf-8').rstrip()
