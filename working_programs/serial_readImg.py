@@ -30,13 +30,11 @@ if __name__ == '__main__':
             if ser.in_waiting > 0:
                 print("Got something")
                 # Read raw serial port
-                data = ser.read(10000)#.rstrip() # 6000 is just a very high limit of bytes to read
+                data = ser.read(20000)#.rstrip() # 6000 is just a very high limit of bytes to read
                 # print(data)
 
                 # r_data = binascii.unhexlify(data)
                 r_data = data
-
-                r_data = ""
                 #r_data = "".unhexlify(chr(int(b_data[i:i+2],16)) for i in range(0, len(b_data),2))
 
                 try:
@@ -44,13 +42,13 @@ if __name__ == '__main__':
 
                     img = Image.open(stream)
                     draw = ImageDraw.Draw(img)
-
+                    print(f'Read image of length {len(r_data)} with format {img.format}')
                     img.show()
 
                     img_name = "a_test" + str(int(random.random()*100)) + ".png"
                     img.save(img_name)
-                except:
-                    print(f'Error reading data of len {len(data)}')
+                except Exception as e:
+                    print(f'Error reading data of len {len(data)} because of: {e}')
 
                 # print(data)
 
