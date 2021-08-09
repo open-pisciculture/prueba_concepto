@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import time
 import RPi.GPIO as GPIO
-from ubi_test import post_request
+# from ubi_test import post_request
 
 def save_video_len(video_len):
     video_frames = []
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         time.sleep(10)
         try: # Post to Ubidots video saved confirmation
             data = {"video_date": date_0}
-            post_request(data)
+            # post_request(data)
         except KeyboardInterrupt:
             break
         except Exception as e:
