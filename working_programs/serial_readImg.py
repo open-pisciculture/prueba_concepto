@@ -45,7 +45,7 @@ if __name__ == '__main__':
                     print(f'Read image of length {len(r_data)} with format {img.format}')
                     img.show()
 
-                    img_name = "a_test" + str(int(random.random()*100)) + ".png"
+                    img_name = "a_test" + str(int(random.random()*10)) + ".png"
                     img.save(img_name)
                 except Exception as e:
                     print(f'Error reading data of len {len(data)} because of: {e}')

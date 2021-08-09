@@ -33,7 +33,7 @@ if __name__ == '__main__':
             if ser.in_waiting > 0:
                 print("Got something -------------------------->")
                 # Read raw serial port
-                data = ser.read(25000) #.rstrip() # 6000 is just a very high limit of bytes to read
+                data = ser.read(230400) #.rstrip() # just a very high limit of bytes to read
                 print(f'data type: {type(data)}')
                 print(f'data length: {len(data)}')
 
