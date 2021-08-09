@@ -17,7 +17,7 @@ def save_video_len(video_len):
     t0 = time.time()
     t1 = t0
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    out = cv2.VideoWriter('../saved_videos/saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (320,240) )
+    out = cv2.VideoWriter('../saved_videos/saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 15.0, (320,240) )
 
     while t1 - t0 < video_len:
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())

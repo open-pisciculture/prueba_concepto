@@ -19,7 +19,7 @@ def save_video_len(video_len):
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     percentage_resize = 0.5
-    out = cv2.VideoWriter(f'../saved_videos/saved_video_date_{date_0}.avi', cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (320,240) ) # 960 x 1280
+    out = cv2.VideoWriter(f'../saved_videos/saved_video_date_{date_0}.avi', cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (320,240) ) # 960 x 1280 in the Pi
 
     while t1 - t0 < video_len:
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
