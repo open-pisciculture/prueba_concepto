@@ -41,6 +41,7 @@ def save_video_len(video_len):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     GPIO.setmode(GPIO.BCM)
     # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
     GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -53,5 +54,8 @@ if __name__ == "__main__":
         try: # Post to Ubidots video saved confirmation
             data = {"video_date": date_0}
             post_request(data)
-        except:
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f'Something happened due to: {e}')
             pass
