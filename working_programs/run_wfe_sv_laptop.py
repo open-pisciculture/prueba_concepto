@@ -12,14 +12,13 @@ import time
 
 def save_video_len(video_len):
     video_frames = []
-    cap = cv2.VideoCapture(-1)
+    cap = cv2.VideoCapture(0)
+    fps = cap.get(cv2.CAP_PROP_FPS)
     frame = np.array([])
     t0 = time.time()
     t1 = t0
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
-    percentage_resize = 0.5
-    out = cv2.VideoWriter(f'../saved_videos/saved_video_date_{date_0}.avi', cv2.VideoWriter_fourcc(*'MJPG'), 30.0, (320,240) ) # 960 x 1280
+    out = cv2.VideoWriter(f'saved_video_date_{date_0}.avi', cv2.VideoWriter_fourcc(*'MJPG'), fps, (320,240) )
 
     while t1 - t0 < video_len:
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -30,8 +29,6 @@ def save_video_len(video_len):
         # Added date to video frame
         frame = cv2.putText(frame, date, (10,20), cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0,255,0))
         frame = cv2.resize(frame, (320,240), interpolation = cv2.INTER_AREA)
-
-        print(f'Frame shape: {frame.shape}')
 
         out.write(frame)
 
@@ -48,19 +45,12 @@ def save_video_len(video_len):
 if __name__ == "__main__":
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     # GPIO.setmode(GPIO.BCM)
-    # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
+    # # Setting up the GPIO23 pin as input with pull_down logic (default 0 state when connected to GND)
     # GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    while True:
-        # print("Waiting for rising edge on port 23")
-        # GPIO.wait_for_edge(23, GPIO.RISING)
-        print("Rising edge detected.")
-        save_video_len(5)
-        time.sleep(10)
-        try: # Post to Ubidots video saved confirmation
-            data = {"video_date": date_0}
-            # post_request(data)
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f'Something happened due to: {e}')
-            pass
+    # while True:
+    print("Waiting for rising edge on port 23")
+    # GPIO.wait_for_edge(23, GPIO.RISING)
+    print("Rising edge detected.")
+    save_video_len(5)
+    time.sleep(3)
+    print("Video saved")
