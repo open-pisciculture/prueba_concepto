@@ -13,11 +13,12 @@ import RPi.GPIO as GPIO
 def save_video_len(video_len):
     video_frames = []
     cap = cv2.VideoCapture(0)
+    fps = cap.get(cv2.CAP_PROP_FPS)
     frame = np.array([])
     t0 = time.time()
     t1 = t0
     date_0 = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    out = cv2.VideoWriter('saved_video_date_{}.avi'.format(date_0), cv2.VideoWriter_fourcc(*'MJPG'), 27.0, (320,240) )
+    out = cv2.VideoWriter(f'saved_video_date_{date_0}.avi', cv2.VideoWriter_fourcc(*'MJPG'), fps, (320,240) )
 
     while t1 - t0 < video_len:
         date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
