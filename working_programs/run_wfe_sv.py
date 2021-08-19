@@ -13,7 +13,8 @@ import RPi.GPIO as GPIO
 def save_video_len(video_len):
     video_frames = []
     cap = cv2.VideoCapture(0)
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps = 8 # fps = cap.get(cv2.CAP_PROP_FPS) # This returns 0.0 in the Raspberry Pi for some reason :/
+    
     frame = np.array([])
     t0 = time.time()
     t1 = t0
