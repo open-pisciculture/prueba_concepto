@@ -15,8 +15,8 @@ def save_video_len(video_len):
     video_frames_2 = []
     cap_1 = cv2.VideoCapture(0) # Index '0' is the default one
     cap_2 = cv2.VideoCapture(2) # Index '2' was obtained by trial and error
-    fps_1 = cap_1.get(cv2.CAP_PROP_FPS) # Getting FPS for Cam 1
-    fps_2 = cap_2.get(cv2.CAP_PROP_FPS) # Getting FPS for Cam 2
+    fps_1 = 8 # fps_1 = cap_1.get(cv2.CAP_PROP_FPS) # Getting FPS for Cam 1, but this returns 0.0 in the Raspberry Pi for some reason :/
+    fps_2 = 8 # fps_2 = cap_2.get(cv2.CAP_PROP_FPS) # Getting FPS for Cam 2, but this returns 0.0 in the Raspberry Pi for some reason :/
     # print(f'FPS 1: {fps_1}\nFPS 2: {fps_2}')
 
     frame_1 = np.array([])
