@@ -16,7 +16,8 @@ def save_video_len(video_len):
     video_frames_1 = []
     video_frames_2 = []
 
-    webcam_1 = VideoStream(src=0).start()
+    # webcam_1 = VideoStream(src=0).start()
+    cap_1 = cv2.VideoCapture(0) # Index '0' is the default one
     webcam_2 = VideoStream(src=2).start()
 
     fps_1 = 70 # Setting FPS for Cam 1
@@ -35,7 +36,7 @@ def save_video_len(video_len):
         t1 = time.time()
 
         # Capture frame-by-frame
-        frame_1 = webcam_1.read()
+        ret_1, frame_1 = cap_1.read()
         frame_2 = webcam_2.read()
         # frame_1 = imutils.resize(frame_1, width=240)
         
@@ -49,8 +50,8 @@ def save_video_len(video_len):
         out_2.write(frame_2)
 
         # Display the resulting frame
-        # cv2.imshow('Cam 1', frame_1)
-        # cv2.imshow('Cam 2', frame_2)
+        cv2.imshow('Cam 1', frame_1)
+        cv2.imshow('Cam 2', frame_2)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         video_frames_1.append(frame_1)
