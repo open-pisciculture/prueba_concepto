@@ -1,3 +1,5 @@
+# python object_tracker.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel
+
 # import the necessary packages
 from centroidtracker import CentroidTracker
 from imutils.video import VideoStream
