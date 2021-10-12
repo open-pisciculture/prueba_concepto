@@ -1,12 +1,12 @@
 # USAGE
 # To read and write back out to video:
-# python fish_detector.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt \
-#	--model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input videos/example_01.mp4 \
-#	--output output/output_01.avi
+# python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input videos/piscicultureVideo_2021-10-01\ 08:54:41.avi \
+# 	--output output/output_01.avi
 #
 # To read from webcam and write back out to disk:
-# python people_counter.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt \
-#	--model mobilenet_ssd/MobileNetSSD_deploy.caffemodel \
+# python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights \
 #	--output output/webcam_output.avi
 
 # import the necessary packages
@@ -23,27 +23,36 @@ import cv2
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--prototxt", required=True,
-	help="path to Caffe 'deploy' prototxt file")
-ap.add_argument("-m", "--model", required=True,
-	help="path to Caffe pre-trained model")
+ap.add_argument("-y", "--yoloconf", required=True,
+	help="path to Yolo config '.cfg' file")
+ap.add_argument("-w", "--weights", required=True,
+	help="path to Yolo pretrained weights '.weights' file")
 ap.add_argument("-i", "--input", type=str,
 	help="path to optional input video file")
 ap.add_argument("-o", "--output", type=str,
 	help="path to optional output video file")
 ap.add_argument("-c", "--confidence", type=float, default=0.4,
 	help="minimum probability to filter weak detections")
-ap.add_argument("-s", "--skip-frames", type=int, default=30,
+ap.add_argument("-s", "--skip-frames", type=int, default=5,
 	help="# of skip frames between detections")
 args = vars(ap.parse_args())
 
-# initialize the list of class labels tinyYoloV4 was trained to detect
-CLASSES = ["fish"]
+# initialize the list of class labels MobileNet SSD was trained to
+# detect
+CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
+	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
+	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
+	"sofa", "train", "tvmonitor"]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
-# net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
-net = cv2.dnn.readNet("yolov4-tiny-detector_best_pisciculturedb.weights", "yolov4-tiny_testing_3chan.cfg")
+# # net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
+yolo_net = cv2.dnn.readNet(args["weights"], args["yoloconf"]) ################### Yolo ###################
+
+yolo_layer_names = yolo_net.getLayerNames() ################### Yolo ###################
+yolo_output_layers = [yolo_layer_names[i[0] - 1] for i in yolo_net.getUnconnectedOutLayers()] ################### Yolo ###################
+classes = ["fish"] ################### Yolo ###################
+colors = np.random.uniform(0, 255, size=(len(classes), 3)) ################### Yolo ###################
 
 # if a video path was not supplied, grab a reference to the webcam
 if not args.get("input", False):
@@ -101,6 +110,7 @@ while True:
 	# if the frame dimensions are empty, set them
 	if W is None or H is None:
 		(H, W) = frame.shape[:2]
+		height, width, channels = frame.shape ################### Yolo ###################
 
 	# if we are supposed to be writing a video to disk, initialize
 	# the writer
@@ -124,31 +134,45 @@ while True:
 
 		# convert the frame to a blob and pass the blob through the
 		# network and obtain the detections
-		blob = cv2.dnn.blobFromImage(frame, 0.007843, (W, H), 127.5)
-		net.setInput(blob)
-		detections = net.forward()
+		yolo_blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False) ################### Yolo ###################
+		yolo_net.setInput(yolo_blob) ################### Yolo ###################
+		yolo_outs = yolo_net.forward(yolo_output_layers) ################### Yolo ###################
 
-		# loop over the detections
-		for i in np.arange(0, detections.shape[2]):
-			# extract the confidence (i.e., probability) associated
-			# with the prediction
-			confidence = detections[0, 0, i, 2]
+		# Showing informations on the screen
+		class_ids = []
+		confidences = []
+		boxes = []
+		for out in yolo_outs:
+			for detection in out:
+				scores = detection[5:]
+				class_id = np.argmax(scores)
+				confidence = scores[class_id]
+				if confidence > args["confidence"]:
+					# Object detected
+					center_x = int(detection[0] * width)
+					center_y = int(detection[1] * height)
+					w = int(detection[2] * width)
+					h = int(detection[3] * height)
 
-			# filter out weak detections by requiring a minimum
-			# confidence
-			if confidence > args["confidence"]:
-				# extract the index of the class label from the
-				# detections list
-				idx = int(detections[0, 0, i, 1])
+					# Rectangle coordinates
+					x = int(center_x - w / 2)
+					y = int(center_y - h / 2)
 
-				# if the class label is not a person, ignore it
-				if CLASSES[idx] != "person":
-					continue
+					boxes.append([x, y, w, h])
+					confidences.append(float(confidence))
+					class_ids.append(class_id)
 
-				# compute the (x, y)-coordinates of the bounding box
-				# for the object
-				box = detections[0, 0, i, 3:7] * np.array([W, H, W, H])
-				(startX, startY, endX, endY) = box.astype("int")
+		indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+		font = cv2.FONT_HERSHEY_PLAIN
+		for i in range(len(boxes)):
+			if i in indexes:
+				# num_peces += 1 # Not counting for the moment
+				x, y, w, h = boxes[i]
+				label = str(classes[class_ids[i]])
+				color = colors[class_ids[i]]
+				# cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+				# cv2.putText(frame, label, (x, y + 30), font, 2, color, 2)
+				(startX, startY, endX, endY) = (x, y, x + w, y + h)
 
 				# construct a dlib rectangle object from the bounding
 				# box coordinates and then start the dlib correlation
