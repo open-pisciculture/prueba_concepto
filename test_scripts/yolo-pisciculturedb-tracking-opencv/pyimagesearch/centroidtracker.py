@@ -12,6 +12,8 @@ class CentroidTracker:
 		self.nextObjectID = 0
 		self.objects = OrderedDict()
 		self.disappeared = OrderedDict()
+		# store how much distance has the object traveled
+		self.traveledDistances = OrderedDict()
 
 		# store the number of maximum consecutive frames a given
 		# object is allowed to be marked as "disappeared" until we
@@ -28,6 +30,7 @@ class CentroidTracker:
 		# ID to store the centroid
 		self.objects[self.nextObjectID] = centroid
 		self.disappeared[self.nextObjectID] = 0
+		self.traveledDistances[self.nextObjectID] = 0
 		self.nextObjectID += 1
 
 	def deregister(self, objectID):
@@ -35,6 +38,7 @@ class CentroidTracker:
 		# both of our respective dictionaries
 		del self.objects[objectID]
 		del self.disappeared[objectID]
+		del self.traveledDistances[objectID]
 
 	def update(self, rects):
 		# check to see if the list of input bounding box rectangles
@@ -122,6 +126,7 @@ class CentroidTracker:
 				# counter
 				objectID = objectIDs[row]
 				self.objects[objectID] = inputCentroids[col]
+				self.traveledDistances[objectID] += D[row, col]
 				self.disappeared[objectID] = 0
 
 				# indicate that we have examined each of the row and
