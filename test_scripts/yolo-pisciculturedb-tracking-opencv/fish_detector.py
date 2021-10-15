@@ -1,7 +1,7 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input videos/piscicultureVideo_2021-10-01\ 08:54:41.avi \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input videos/test_vid.avi \
 # 	--output output/output_01.avi
 #
 # To read from webcam and write back out to disk:
@@ -255,6 +255,9 @@ while True:
 
 		# store the trackable object in our dictionary
 		trackableObjects[objectID] = to
+		
+		avg_dist = sum( ct.traveledDistances.values() )/len( ct.traveledDistances.values() )
+		print(f"Traveled distance avg: {avg_dist}")
 
 		# draw both the ID of the object and the centroid of the
 		# object on the output frame

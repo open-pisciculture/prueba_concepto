@@ -1,5 +1,5 @@
 class TrackableObject:
-	def __init__(self, objectID, centroid):
+	def __init__(self, objectID, centroid, traveledDist=0):
 		# store the object ID, then initialize a list of centroids
 		# using the current centroid
 		self.objectID = objectID
