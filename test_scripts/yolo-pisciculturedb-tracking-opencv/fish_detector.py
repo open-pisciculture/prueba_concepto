@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
@@ -10,6 +12,7 @@
 #	--output output/webcam_output.avi
 
 # import the necessary packages
+from posix import times_result
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
 from imutils.video import VideoStream
@@ -20,6 +23,11 @@ import imutils
 import time
 import dlib
 import cv2
+import glob
+import os
+from datetime import datetime
+import csv
+import pandas as pd
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -63,8 +71,14 @@ if not args.get("input", False):
 # otherwise, grab a reference to the video file
 else:
 	print("[INFO] opening video file...")
-	vs = cv2.VideoCapture(args["input"])
+	vid_folder_path = os.path.join(os.getcwd(),'videos') # Opening cwd and joining it with `videos` folder name
+	files_in_path = glob.glob(r"{}/*.avi".format(vid_folder_path)) # This returns a list of all files ending with .avi in the path `img_folder_path`
+	try:
+		timestamp = datetime.strptime(files_in_path[0][-23:-4], '%Y-%m-%d %H:%M:%S') # Timestamp corresponds to last part of the video's name
+	except ValueError: # If video's name doesn't include timestamp
+		timestamp = datetime.now()
 
+	vs = cv2.VideoCapture(files_in_path[0])
 # initialize the video writer (we'll instantiate later if need be)
 writer = None
 
@@ -316,3 +330,13 @@ else:
 
 # close any open windows
 cv2.destroyAllWindows()
+
+csv_path = os.path.join(os.getcwd(),'video_data.csv')
+print(f"vid_folder_path: {csv_path}")
+
+df = pd.DataFrame([{'Average Distance': avg_dist,
+				   'timestamp': timestamp}])
+
+df.to_csv(csv_path, mode='a', index=False, header=False)
+
+print(f"[INFO] Saving to CSV {csv_path}")
