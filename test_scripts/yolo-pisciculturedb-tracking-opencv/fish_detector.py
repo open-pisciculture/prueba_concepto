@@ -236,10 +236,10 @@ for j in range(len(vs_list)):
 				# add the bounding box coordinates to the rectangles list
 				rects.append((startX, startY, endX, endY))
 
-		# draw a horizontal line in the center of the frame -- once an
-		# object crosses this line we will determine whether they were
-		# moving 'up' or 'down'
-		cv2.line(frame, (0, H // 2), (W, H // 2), (0, 255, 255), 2)
+		# # draw a horizontal line in the center of the frame -- once an
+		# # object crosses this line we will determine whether they were
+		# # moving 'up' or 'down'
+		# cv2.line(frame, (0, H // 2), (W, H // 2), (0, 255, 255), 2)
 
 		# use the centroid tracker to associate the (1) old object
 		# centroids with (2) the newly computed object centroids
@@ -296,19 +296,19 @@ for j in range(len(vs_list)):
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 			cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
-		# construct a tuple of information we will be displaying on the
-		# frame
-		info = [
-			("Up", totalUp),
-			("Down", totalDown),
-			("Status", status),
-		]
+		# # construct a tuple of information we will be displaying on the
+		# # frame
+		# info = [
+		# 	("Up", totalUp),
+		# 	("Down", totalDown),
+		# 	("Status", status),
+		# ]
 
-		# loop over the info tuples and draw them on our frame
-		for (i, (k, v)) in enumerate(info):
-			text = "{}: {}".format(k, v)
-			cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
-				cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+		# # loop over the info tuples and draw them on our frame
+		# for (i, (k, v)) in enumerate(info):
+		# 	text = "{}: {}".format(k, v)
+		# 	cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
+		# 		cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
 		# check to see if we should write the frame to disk
 		if writer is not None:
