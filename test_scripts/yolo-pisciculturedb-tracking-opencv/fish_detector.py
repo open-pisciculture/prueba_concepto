@@ -12,6 +12,7 @@
 #	--output output/webcam_output.avi
 
 # import the necessary packages
+from numpy.core.fromnumeric import round_
 from posix import times_result
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
@@ -28,6 +29,7 @@ import os
 from datetime import datetime
 import csv
 import pandas as pd
+import statistics
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -85,6 +87,8 @@ else:
 		timestamp_list.append(timestamp)
 
 for j in range(len(vs_list)):
+	list_traveled_x = []
+	list_traveled_y = []
 	print(f"[INFO] STARTED processing video No. {j+1}")
 	vs = vs_list[j]
 	# initialize the video writer (we'll instantiate later if need be)
@@ -207,6 +211,9 @@ for j in range(len(vs_list)):
 					# utilize it during skip frames
 					trackers.append(tracker)
 
+					list_traveled_x.append(x)
+					list_traveled_y.append(y)
+
 		# otherwise, we should utilize our object *trackers* rather than
 		# object *detectors* to obtain a higher frame processing throughput
 		else:
@@ -259,26 +266,27 @@ for j in range(len(vs_list)):
 				direction = centroid[1] - np.mean(y)
 				to.centroids.append(centroid)
 
-				# check to see if the object has been counted or not
-				if not to.counted:
-					# if the direction is negative (indicating the object
-					# is moving up) AND the centroid is above the center
-					# line, count the object
-					if direction < 0 and centroid[1] < H // 2:
-						totalUp += 1
-						to.counted = True
+				# # check to see if the object has been counted or not
+				# if not to.counted:
+				# 	# if the direction is negative (indicating the object
+				# 	# is moving up) AND the centroid is above the center
+				# 	# line, count the object
+				# 	if direction < 0 and centroid[1] < H // 2:
+				# 		totalUp += 1
+				# 		to.counted = True
 
-					# if the direction is positive (indicating the object
-					# is moving down) AND the centroid is below the
-					# center line, count the object
-					elif direction > 0 and centroid[1] > H // 2:
-						totalDown += 1
-						to.counted = True
+				# 	# if the direction is positive (indicating the object
+				# 	# is moving down) AND the centroid is below the
+				# 	# center line, count the object
+				# 	elif direction > 0 and centroid[1] > H // 2:
+				# 		totalDown += 1
+				# 		to.counted = True
 
 			# store the trackable object in our dictionary
 			trackableObjects[objectID] = to
 			
-			avg_dist = sum( ct.traveledDistances.values() )/len( ct.traveledDistances.values() )
+			# Calculate average traveled distance
+			avg_dist = statistics.mean( ct.traveledDistances.values() )
 			# print(f"Traveled distance avg: {avg_dist}")
 
 			# draw both the ID of the object and the centroid of the
@@ -339,8 +347,12 @@ for j in range(len(vs_list)):
 	# close any open windows
 	cv2.destroyAllWindows()
 
+	avg_x = statistics.mean(list_traveled_x) # Average X position
+	avg_y = statistics.mean(list_traveled_y) # Average Y position
 	csv_path = os.path.join(os.getcwd(),'video_data.csv')
 	df = pd.DataFrame([{'Average Distance': round(avg_dist,4),
+						'Average X': round(avg_x),
+						'Average Y': round(avg_y),
 						'timestamp': timestamp_list[j]}])
 
 	df.to_csv(csv_path, mode='a', index=False, header=False)
