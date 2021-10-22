@@ -66,7 +66,6 @@ colors = np.random.uniform(0, 255, size=(len(classes), 3)) ################### Y
 if not args.get("input", False):
 	print("[INFO] starting video stream...")
 	vs_list = [VideoStream(src=0).start()]
-	time.sleep(2.0)
 
 # otherwise, grab a reference to the video file
 else:
@@ -341,10 +340,8 @@ for j in range(len(vs_list)):
 	cv2.destroyAllWindows()
 
 	csv_path = os.path.join(os.getcwd(),'video_data.csv')
-	df = pd.DataFrame([{'Average Distance': avg_dist,
+	df = pd.DataFrame([{'Average Distance': round(avg_dist,4),
 						'timestamp': timestamp_list[j]}])
-
-	time.sleep(2)
 
 	df.to_csv(csv_path, mode='a', index=False, header=False)
 
