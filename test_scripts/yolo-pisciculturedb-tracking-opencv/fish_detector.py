@@ -3,8 +3,8 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input videos/test_vid.avi \
-# 	--output output/output_01.avi
+# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input true \
+# 	--output true
 #
 # To read from webcam and write back out to disk:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
@@ -30,6 +30,8 @@ from datetime import datetime
 import csv
 import pandas as pd
 import statistics
+# from sklearn.metrics import pairwise_distances
+from scipy.spatial import distance_matrix
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -89,6 +91,7 @@ else:
 for j in range(len(vs_list)):
 	list_traveled_x = []
 	list_traveled_y = []
+	list_pwdist = []
 	print(f"[INFO] STARTED processing video No. {j+1}")
 	vs = vs_list[j]
 	# initialize the video writer (we'll instantiate later if need be)
@@ -211,6 +214,7 @@ for j in range(len(vs_list)):
 					# utilize it during skip frames
 					trackers.append(tracker)
 
+					# Add current position so we can calculate avg (x,y) position later
 					list_traveled_x.append(x)
 					list_traveled_y.append(y)
 
@@ -245,6 +249,8 @@ for j in range(len(vs_list)):
 		# centroids with (2) the newly computed object centroids
 		objects = ct.update(rects)
 
+		objs_positions_x = []
+		objs_positions_y = []
 		# loop over the tracked objects
 		for (objectID, centroid) in objects.items():
 			# check to see if a trackable object exists for the current
@@ -295,6 +301,18 @@ for j in range(len(vs_list)):
 			cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 			cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
+
+			# Saving all positions so we can calculate avg pairwise distance later
+			objs_positions_x.append([centroid[0], centroid[1]])
+			# objs_positions_y.append(centroid[1])
+
+		try:
+			objs_positions_x = np.array(objs_positions_x)
+			objs_positions_y = np.array(objs_positions_y)
+			current_pwdist = np.mean( distance_matrix(objs_positions_x, objs_positions_x) ) # Obtaining distances matrix and calculating mean
+			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
+		except ValueError as e:
+			print(f'No objects detected to calculate pairwise distances yet. ({e})... Skipping frame')
 
 		# # construct a tuple of information we will be displaying on the
 		# # frame
@@ -347,12 +365,14 @@ for j in range(len(vs_list)):
 	# close any open windows
 	cv2.destroyAllWindows()
 
+	avg_pwdist = statistics.mean(list_pwdist) # Average Pairwise Distances
 	avg_x = statistics.mean(list_traveled_x) # Average X position
 	avg_y = statistics.mean(list_traveled_y) # Average Y position
 	csv_path = os.path.join(os.getcwd(),'video_data.csv')
 	df = pd.DataFrame([{'Average Distance': round(avg_dist,4),
 						'Average X': round(avg_x),
 						'Average Y': round(avg_y),
+						'Average Pairwise Distance': round(avg_pwdist,4),
 						'timestamp': timestamp_list[j]}])
 
 	df.to_csv(csv_path, mode='a', index=False, header=False)
