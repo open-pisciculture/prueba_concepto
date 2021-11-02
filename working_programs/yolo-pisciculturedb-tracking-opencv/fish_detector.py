@@ -83,8 +83,10 @@ else:
 	for i in range(len(files_in_path)):
 		vs_list.append(cv2.VideoCapture(files_in_path[i]))
 		try:
-			timestamp = datetime.strptime(files_in_path[i][-23:-4], '%Y-%m-%d %H:%M:%S') # Timestamp corresponds to last part of the video's name
-		except ValueError: # If video's name doesn't include timestamp
+			print(files_in_path[i][-23:-4].replace('_', ':'))
+			timestamp = datetime.strptime(files_in_path[i][-23:-4].replace('_', ':'), '%Y-%m-%d %H:%M:%S') # Timestamp corresponds to last part of the video's name
+		except ValueError as e: # If video's name doesn't include timestamp
+			print(f"Couldn't get timestamp because {e}")
 			timestamp = datetime.now()
 		timestamp_list.append(timestamp)
 
