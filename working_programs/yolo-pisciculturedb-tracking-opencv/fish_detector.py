@@ -76,7 +76,7 @@ else:
 	for i in range(len(files_in_path)):
 		vs_list.append(cv2.VideoCapture(files_in_path[i]))
 		try:
-			print(files_in_path[i][-23:-4].replace('_', ':'))
+			# print(files_in_path[i][-23:-4].replace('_', ':')) # printing extracted timestamp
 			timestamp = datetime.strptime(files_in_path[i][-23:-4].replace('_', ':'), '%Y-%m-%d %H:%M:%S') # Timestamp corresponds to last part of the video's name
 		except ValueError as e: # If video's name doesn't include timestamp
 			print(f"Couldn't get timestamp because {e}")
@@ -113,6 +113,8 @@ for j in range(len(vs_list)):
 	# start the frames per second throughput estimator
 	fps = FPS().start()
 
+	# Initialize this here so the `frame is to dark` msg isn't repeated for each frame
+	ack_frame_is_dark = False
 	# loop over frames from the video stream
 	while True:
 		# grab the next frame and handle if we are reading from either
@@ -150,7 +152,9 @@ for j in range(len(vs_list)):
 		rects = []
 
 		if np.mean(frame) < 30:
-			print(f"[INFO] Image is too dark, pixel mean: {np.mean(frame)}")
+			if not ack_frame_is_dark:
+				print(f"[INFO] Frame is too dark, pixel mean: {np.mean(frame)}")
+				ack_frame_is_dark = True
 			objs_positions = np.array([[0,0]])
 			current_pwdist = 0 # Obtaining distances matrix and calculating mean
 			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
