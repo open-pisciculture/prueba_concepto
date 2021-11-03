@@ -1,3 +1,5 @@
 # Currently ignoring .avi format video files
 *.avi
 *.log
+# Also ignoring .png image files (e.g. pisciculturedb)
+imagefrom*.png
