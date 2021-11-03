@@ -153,7 +153,7 @@ for j in range(len(vs_list)):
 
 		if np.mean(frame) < 30:
 			if not ack_frame_is_dark:
-				print(f"[INFO] Frame is too dark, pixel mean: {np.mean(frame)}")
+				print(f"[INFO] Frame is too dark, pixel mean: {np.mean(frame)}. Checking rest of the video...")
 				ack_frame_is_dark = True
 			objs_positions = np.array([[0,0]])
 			current_pwdist = 0 # Obtaining distances matrix and calculating mean
