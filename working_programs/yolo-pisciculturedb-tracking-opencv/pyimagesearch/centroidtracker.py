@@ -38,7 +38,7 @@ class CentroidTracker:
 		# both of our respective dictionaries
 		del self.objects[objectID]
 		del self.disappeared[objectID]
-		del self.traveledDistances[objectID]
+		# del self.traveledDistances[objectID] # We don't want to delete this data
 
 	def update(self, rects):
 		# check to see if the list of input bounding box rectangles

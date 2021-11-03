@@ -3,12 +3,12 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights --input true \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true \
 # 	--output true
 #
 # To read from webcam and write back out to disk:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb.weights \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights \
 #	--output output/webcam_output.avi
 
 # import the necessary packages
@@ -48,13 +48,6 @@ ap.add_argument("-c", "--confidence", type=float, default=0.4,
 ap.add_argument("-s", "--skip-frames", type=int, default=5,
 	help="# of skip frames between detections")
 args = vars(ap.parse_args())
-
-# initialize the list of class labels MobileNet SSD was trained to
-# detect
-CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-	"sofa", "train", "tvmonitor"]
 
 # load our serialized model from disk
 print("[INFO] loading model...")
@@ -156,6 +149,15 @@ for j in range(len(vs_list)):
 		status = "Waiting"
 		rects = []
 
+		if np.mean(frame) < 30:
+			print(f"[INFO] Image is too dark, pixel mean: {np.mean(frame)}")
+			objs_positions = np.array([[0,0]])
+			current_pwdist = 0 # Obtaining distances matrix and calculating mean
+			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
+			list_traveled_x.append(0)
+			list_traveled_y.append(0)
+			continue
+
 		# check to see if we should run a more computationally expensive
 		# object detection method to aid our tracker
 		if totalFrames % args["skip_frames"] == 0:
@@ -251,8 +253,7 @@ for j in range(len(vs_list)):
 		# centroids with (2) the newly computed object centroids
 		objects = ct.update(rects)
 
-		objs_positions_x = []
-		objs_positions_y = []
+		objs_positions = []
 		# loop over the tracked objects
 		for (objectID, centroid) in objects.items():
 			# check to see if a trackable object exists for the current
@@ -294,7 +295,7 @@ for j in range(len(vs_list)):
 			trackableObjects[objectID] = to
 			
 			# Calculate average traveled distance
-			avg_dist = statistics.mean( ct.traveledDistances.values() )
+			avg_dist = np.sum( ct.traveledDistances.values() )
 			# print(f"Traveled distance avg: {avg_dist}")
 
 			# draw both the ID of the object and the centroid of the
@@ -305,13 +306,11 @@ for j in range(len(vs_list)):
 			cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
 			# Saving all positions so we can calculate avg pairwise distance later
-			objs_positions_x.append([centroid[0], centroid[1]])
-			# objs_positions_y.append(centroid[1])
+			objs_positions.append([centroid[0], centroid[1]])
 
 		try:
-			objs_positions_x = np.array(objs_positions_x)
-			objs_positions_y = np.array(objs_positions_y)
-			current_pwdist = np.mean( distance_matrix(objs_positions_x, objs_positions_x) ) # Obtaining distances matrix and calculating mean
+			objs_positions = np.array(objs_positions)
+			current_pwdist = np.mean( distance_matrix(objs_positions, objs_positions) ) # Obtaining distances matrix and calculating mean
 			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
 		except ValueError as e:
 			print(f'No objects detected to calculate pairwise distances yet. ({e})... Skipping frame')
@@ -367,9 +366,9 @@ for j in range(len(vs_list)):
 	# close any open windows
 	cv2.destroyAllWindows()
 
-	avg_pwdist = statistics.mean(list_pwdist) # Average Pairwise Distances
-	avg_x = statistics.mean(list_traveled_x) # Average X position
-	avg_y = statistics.mean(list_traveled_y) # Average Y position
+	avg_pwdist = np.mean(list_pwdist) # Average Pairwise Distances
+	avg_x = np.mean(list_traveled_x) # Average X position
+	avg_y = np.mean(list_traveled_y) # Average Y position
 	csv_path = os.path.join(os.getcwd(),'video_data.csv')
 	df = pd.DataFrame([{'Average Distance': round(avg_dist,4),
 						'Average X': round(avg_x),
