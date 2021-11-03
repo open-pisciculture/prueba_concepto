@@ -295,8 +295,7 @@ for j in range(len(vs_list)):
 			trackableObjects[objectID] = to
 			
 			# Calculate average traveled distance
-			avg_dist = np.sum( ct.traveledDistances.values() )
-			# print(f"Traveled distance avg: {avg_dist}")
+			avg_dist = sum( ct.traveledDistances.values() )
 
 			# draw both the ID of the object and the centroid of the
 			# object on the output frame
