@@ -3,7 +3,7 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true -c 0.7 -s 10 \
 # 	--output true
 #
 # To read from webcam and write back out to disk:
@@ -76,7 +76,7 @@ else:
 	for i in range(len(files_in_path)):
 		vs_list.append(cv2.VideoCapture(files_in_path[i]))
 		try:
-			print(files_in_path[i][-23:-4].replace('_', ':'))
+			# print(files_in_path[i][-23:-4].replace('_', ':')) # printing extracted timestamp
 			timestamp = datetime.strptime(files_in_path[i][-23:-4].replace('_', ':'), '%Y-%m-%d %H:%M:%S') # Timestamp corresponds to last part of the video's name
 		except ValueError as e: # If video's name doesn't include timestamp
 			print(f"Couldn't get timestamp because {e}")
@@ -113,6 +113,8 @@ for j in range(len(vs_list)):
 	# start the frames per second throughput estimator
 	fps = FPS().start()
 
+	# Initialize this here so the `frame is to dark` msg isn't repeated for each frame
+	ack_frame_is_dark = False
 	# loop over frames from the video stream
 	while True:
 		# grab the next frame and handle if we are reading from either
@@ -150,12 +152,15 @@ for j in range(len(vs_list)):
 		rects = []
 
 		if np.mean(frame) < 30:
-			print(f"[INFO] Image is too dark, pixel mean: {np.mean(frame)}")
-			objs_positions = np.array([[0,0]])
-			current_pwdist = 0 # Obtaining distances matrix and calculating mean
+			if not ack_frame_is_dark:
+				print(f"[WARN] Frame is too dark, pixel mean: {np.mean(frame)}. Checking rest of the video...")
+				ack_frame_is_dark = True
+			objs_positions = np.array([[-1,-1]])
+			current_pwdist = -1 # Obtaining distances matrix and calculating mean
 			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
-			list_traveled_x.append(0)
-			list_traveled_y.append(0)
+			list_traveled_x.append(-1)
+			list_traveled_y.append(-1)
+			avg_dist = -1
 			continue
 
 		# check to see if we should run a more computationally expensive
@@ -295,8 +300,7 @@ for j in range(len(vs_list)):
 			trackableObjects[objectID] = to
 			
 			# Calculate average traveled distance
-			avg_dist = np.sum( ct.traveledDistances.values() )
-			# print(f"Traveled distance avg: {avg_dist}")
+			avg_dist = sum( ct.traveledDistances.values() )
 
 			# draw both the ID of the object and the centroid of the
 			# object on the output frame
@@ -379,3 +383,4 @@ for j in range(len(vs_list)):
 	df.to_csv(csv_path, mode='a', index=False, header=False)
 
 	print(f"[INFO] Saving to CSV {csv_path}")
+print(f"[DONE] Finished processing videos.")
