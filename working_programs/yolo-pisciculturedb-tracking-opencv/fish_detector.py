@@ -3,7 +3,7 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true -c 0.7 -s 10 \
 # 	--output true
 #
 # To read from webcam and write back out to disk:
@@ -153,13 +153,14 @@ for j in range(len(vs_list)):
 
 		if np.mean(frame) < 30:
 			if not ack_frame_is_dark:
-				print(f"[INFO] Frame is too dark, pixel mean: {np.mean(frame)}. Checking rest of the video...")
+				print(f"[WARN] Frame is too dark, pixel mean: {np.mean(frame)}. Checking rest of the video...")
 				ack_frame_is_dark = True
-			objs_positions = np.array([[0,0]])
-			current_pwdist = 0 # Obtaining distances matrix and calculating mean
+			objs_positions = np.array([[-1,-1]])
+			current_pwdist = -1 # Obtaining distances matrix and calculating mean
 			list_pwdist.append(current_pwdist) # Saving current avg pwdist so we can calculate average again later
-			list_traveled_x.append(0)
-			list_traveled_y.append(0)
+			list_traveled_x.append(-1)
+			list_traveled_y.append(-1)
+			avg_dist = -1
 			continue
 
 		# check to see if we should run a more computationally expensive
@@ -382,3 +383,4 @@ for j in range(len(vs_list)):
 	df.to_csv(csv_path, mode='a', index=False, header=False)
 
 	print(f"[INFO] Saving to CSV {csv_path}")
+print(f"[DONE] Finished processing videos.")
