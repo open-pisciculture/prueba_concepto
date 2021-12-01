@@ -159,6 +159,9 @@ for j in range(1451, len(vs_list)):
 			avg_dist = -1
 			continue
 
+		if totalFrames % 15 == 0:
+			break
+
 		# check to see if we should run a more computationally expensive
 		# object detection method to aid our tracker
 		if totalFrames % args["skip_frames"] == 0:
