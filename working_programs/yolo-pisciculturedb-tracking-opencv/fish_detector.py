@@ -3,7 +3,7 @@
 # USAGE
 # To read and write back out to video:
 # python fish_detector.py --yoloconf yolov4-tiny_testing_3chan.cfg \
-# 	--weights yolov4-tiny-detector_best_pisciculturedb-v2.weights --input true -c 0.7 -s 10 \
+# 	--weights yolov4-tiny-detector_best_pisciculturedb-v3.weights --input true -c 0.7 -s 10 \
 # 	--output true
 #
 # To read from webcam and write back out to disk:
@@ -13,7 +13,6 @@
 
 # import the necessary packages
 from numpy.core.fromnumeric import round_
-from posix import times_result
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
 from imutils.video import VideoStream
@@ -21,15 +20,12 @@ from imutils.video import FPS
 import numpy as np
 import argparse
 import imutils
-import time
 import dlib
 import cv2
 import glob
 import os
 from datetime import datetime
-import csv
 import pandas as pd
-import statistics
 # from sklearn.metrics import pairwise_distances
 from scipy.spatial import distance_matrix
 
@@ -83,7 +79,7 @@ else:
 			timestamp = datetime.now()
 		timestamp_list.append(timestamp)
 
-for j in range(len(vs_list)):
+for j in range(1451, len(vs_list)):
 	list_traveled_x = []
 	list_traveled_y = []
 	list_pwdist = []
@@ -374,7 +370,8 @@ for j in range(len(vs_list)):
 	avg_x = np.mean(list_traveled_x) # Average X position
 	avg_y = np.mean(list_traveled_y) # Average Y position
 	csv_path = os.path.join(os.getcwd(),'video_data.csv')
-	df = pd.DataFrame([{'Average Distance': round(avg_dist,4),
+	df = pd.DataFrame([{'Video Index': j,
+						'Average Distance': round(avg_dist,4),
 						'Average X': round(avg_x),
 						'Average Y': round(avg_y),
 						'Average Pairwise Distance': round(avg_pwdist,4),
