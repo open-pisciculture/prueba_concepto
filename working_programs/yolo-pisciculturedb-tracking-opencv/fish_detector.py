@@ -79,7 +79,7 @@ else:
 			timestamp = datetime.now()
 		timestamp_list.append(timestamp)
 
-for j in range(1451, len(vs_list)):
+for j in range(2596, len(vs_list)):
 	list_traveled_x = []
 	list_traveled_y = []
 	list_pwdist = []
